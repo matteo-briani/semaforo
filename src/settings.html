@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet" />
+    <script>
+      const apiUrl =
+        window.location.hostname === "localhost" ? "http://semaforo.lan" : window.location.origin;
+
+      function displayStates() {
+        lookup().then((wifiState) => {
+          document.querySelector(`#wifi-ssid`).innerHTML = wifiState.ssid || "[unknown]";
+          document.querySelector(`#wifi-status`).innerHTML = [
+            "connected",
+            "not connected",
+          ].includes(wifiState.status)
+            ? wifiState.status
+            : "[unknown]";
+        });
+      }
+
+      function update() {
+        const ssid = document.querySelector(`#new-wifi-ssid`).value;
+        const password = document.querySelector(`#new-wifi-password`).value;
+        fetch(`${apiUrl}/wifi/?ssid=${ssid}&password=${password}`, {
+          method: "PUT",
+        }).then(displayStates);
+      }
+
+      function lookup() {
+        return fetch(`${apiUrl}/wifi/`, {
+          method: "GET",
+        }).then((res) => res.json());
+      }
+
+      function navigateTo(url) {
+        window.location.href = url;
+      }
+    </script>
+    <style>
+      td {
+        padding: 0.2em;
+      }
+    </style>
+    <title>Semaforo Settings</title>
+  </head>
+  <body onload="displayStates()">
+    <nav class="bg-gray-800 text-center mb-6">
+      <button
+        onclick="navigateTo('/')"
+        class="border border-grey-500 bg-grey-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-grey-600 focus:outline-none focus:shadow-outline"
+      >
+        Home
+      </button>
+      <button
+        onclick="navigateTo('/settings.html')"
+        class="border border-grey-500 bg-grey-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-grey-600 focus:outline-none focus:shadow-outline"
+      >
+        Settings
+      </button>
+    </nav>
+    <section class="text-xl mb-6 flex justify-center">
+        <table>
+            <thead><tr><th></th><th></th></tr></thead>
+            <tbody>
+                 <tr>
+                    <td><p class="font-bold mb-2">WiFi SSID</p></td><td><span id="wifi-ssid">...</span></td>
+                </tr>
+                <tr>
+                    <td><p class="font-bold mb-2">WiFi status</p></td><td><span id="wifi-status">...</span></td>
+                </tr>
+                <tr>
+                    <td></td><td></td>
+                </tr>
+                <tr>
+                    <td><p class="font-bold mb-2">New SSID</p></td><td><input id="new-wifi-ssid" class="border-solid border-4 w-56"></input></td>
+                </tr>
+                <tr>
+                    <td><p class="font-bold mb-2">Password</p></td><td><input id="new-wifi-password" class="border-solid border-4 w-56"></input></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <button
+                            onclick="update()"
+                            class="border border-red-500 bg-red-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-red-600 focus:outline-none focus:shadow-outline"
+                        >
+                            Apply settings
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+  </body>
+</html>

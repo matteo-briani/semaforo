@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet" />
+    <script>
+      let states = {
+        red: "off",
+        yellow: "off",
+        green: "off",
+      };
+
+      const apiUrl =
+        window.location.hostname === "localhost" ? "http://semaforo.lan" : window.location.origin;
+
+      function displayStates() {
+        lookup().then((newStates) => {
+          states = newStates;
+          Object.keys(states).forEach((color) => {
+            document.querySelector(`#${color}-state`).innerHTML = states[color];
+          });
+        });
+      }
+
+      function update(color, state) {
+        states[color] = state;
+        fetch(
+          `${apiUrl}/semaforo/?red=${states["red"]}&yellow=${states["yellow"]}&green=${states["green"]}`,
+          {
+            method: "PUT",
+          }
+        ).then(displayStates);
+      }
+
+      function lookup() {
+        return fetch(`${apiUrl}/semaforo/`, {
+          method: "GET",
+        }).then((res) => res.json());
+      }
+
+      function navigateTo(url) {
+        window.location.href = url;
+      }
+    </script>
+    <title>Semaforo Home</title>
+  </head>
+  <body onload="displayStates()">
+    <nav class="bg-gray-800 text-center mb-6">
+      <button
+        onclick="navigateTo('/')"
+        class="border border-grey-500 bg-grey-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-grey-600 focus:outline-none focus:shadow-outline"
+      >
+        Home
+      </button>
+      <button
+        onclick="navigateTo('/settings.html')"
+        class="border border-grey-500 bg-grey-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-grey-600 focus:outline-none focus:shadow-outline"
+      >
+        Settings
+      </button>
+    </nav>
+    <section class="text-center mb-6">
+      <p class="text-xl text-center font-bold mb-2">Red: <span id="red-state"></span></p>
+      <button
+        onclick="update('red', 'off')"
+        class="border border-red-500 bg-red-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-red-600 focus:outline-none focus:shadow-outline"
+      >
+        Off
+      </button>
+      <button
+        onclick="update('red', 'on')"
+        class="border border-red-500 bg-red-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-red-600 focus:outline-none focus:shadow-outline"
+      >
+        On
+      </button>
+      <button
+        onclick="update('red', 'blink')"
+        class="border border-red-500 bg-red-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-red-600 focus:outline-none focus:shadow-outline"
+      >
+        Blink
+      </button>
+    </section>
+    <section class="text-center mb-6">
+      <p class="text-xl text-center font-bold mb-2">Yellow: <span id="yellow-state"></span></p>
+      <button
+        onclick="update('yellow', 'off')"
+        class="border border-yellow-500 bg-yellow-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-yellow-600 focus:outline-none focus:shadow-outline"
+      >
+        Off
+      </button>
+      <button
+        onclick="update('yellow', 'on')"
+        class="border border-yellow-500 bg-yellow-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-yellow-600 focus:outline-none focus:shadow-outline"
+      >
+        On
+      </button>
+      <button
+        onclick="update('yellow', 'blink')"
+        class="border border-yellow-500 bg-yellow-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-yellow-600 focus:outline-none focus:shadow-outline"
+      >
+        Blink
+      </button>
+    </section>
+    <section class="text-center mb-6">
+      <p class="text-xl text-center font-bold mb-2">Green: <span id="green-state"></span></p>
+      <button
+        onclick="update('green', 'off')"
+        class="border border-green-500 bg-green-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-green-600 focus:outline-none focus:shadow-outline"
+      >
+        Off
+      </button>
+      <button
+        onclick="update('green', 'on')"
+        class="border border-green-500 bg-green-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-green-600 focus:outline-none focus:shadow-outline"
+      >
+        On
+      </button>
+      <button
+        onclick="update('green', 'blink')"
+        class="border border-green-500 bg-green-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-green-600 focus:outline-none focus:shadow-outline"
+      >
+        Blink
+      </button>
+    </section>
+  </body>
+</html>
